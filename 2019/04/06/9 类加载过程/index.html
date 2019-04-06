@@ -22,7 +22,7 @@
     <meta name="description" content="">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-    <title>kobepassme · bryanze&#39;s Studio</title>
+    <title>bryanze&#39;s Studio</title>
     <style type="text/css">
     @font-face {
         font-family: 'Oswald-Regular';
@@ -217,7 +217,7 @@
                 <a href="/" >bryanze&#39;s Studio.</a>
             </div>
             <div class="post-title">
-                <a href="#" class="post-name">kobepassme</a>
+                <a href="#" class="post-name"></a>
             </div>
     </div>
     
@@ -247,7 +247,7 @@ height:50vh;
         <h1 class="intro-title">
             <!-- 主页  -->
             
-            kobepassme
+            [Untitled Post]
             <!-- 404 -->
             
         </h1>
@@ -266,7 +266,7 @@ height:50vh;
                 
                 
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">0</span>阅读时长: <span class="post-count reading-time">1 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">1.1k</span>阅读时长: <span class="post-count reading-time">4 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
@@ -395,15 +395,49 @@ height:50vh;
         <div class="container container-unloaded">
             <main class="main post-page">
     <article class="article-entry">
-        
+        <h1 id="9-类加载过程"><a href="#9-类加载过程" class="headerlink" title="9 类加载过程"></a>9 类加载过程</h1><p>类加载过程包括5个阶段：加载、验证、准备、解析和初始化</p>
+<h2 id="加载"><a href="#加载" class="headerlink" title="加载"></a>加载</h2><h3 id="加载过程"><a href="#加载过程" class="headerlink" title="加载过程"></a>加载过程</h3><p>“加载”是类加载过程的一个阶段，不要混淆，在加载阶段，虚拟机要完成三件事：</p>
+<ul>
+<li>通过类的全限定名获取该类的二进制字节流</li>
+<li>将二进制字节流所代表的静态结构转化为方法区的运行时数据结构。</li>
+<li>*在内存中创建一个代表该类的 java.lang.Class 对象，作为方法区这个类的各种数据的访问入口。</li>
+</ul>
+<h3 id="获取二进制字节流"><a href="#获取二进制字节流" class="headerlink" title="获取二进制字节流"></a>获取二进制字节流</h3><p>对于 Class 文件，虚拟机没有指明要从哪里获取、怎样获取。除了直接从编译好的 .class 文件中读取，还有以下几种方式：</p>
+<ul>
+<li>从 zip 包中读取，如 jar、war等</li>
+<li>从网络中获取，如 Applect</li>
+<li>通过动态代理计数生成代理类的二进制字节流</li>
+<li>由 JSP 文件生成对应的 Class 类</li>
+<li>从数据库中读取，如 有些中间件服务器可以选择把程序安装到数据库中来完成程序代码在集群间的分发。</li>
+</ul>
+<h2 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h2><h3 id="验证的重要性"><a href="#验证的重要性" class="headerlink" title="验证的重要性"></a>验证的重要性</h3><p>验证阶段确保 Class 文件的字节流中包含的信息符合当前虚拟机的要求，并且不会危害虚拟机自身的安全。</p>
+<h2 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h2><p>准备阶段是正式为类变量（或称“静态成员变量”）分配内存并设置初始值的阶段。这些变量（不包括实例变量）所使用的内存都在方法区中进行分配。</p>
+<p>初始值“通常情况下”是数据类型的零值（0, null…），假设一个类变量的定义为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public static int value = 123;</span><br></pre></td></tr></table></figure>
+<p>那么变量 value 在准备阶段过后的初始值为 0 而不是 123，因为这时候尚未开始执行任何 Java 方法。</p>
+<p>存在“特殊情况”：如果类字段的字段属性表中存在 ConstantValue 属性，那么在准备阶段 value 就会被初始化为 ConstantValue 属性所指定的值，假设上面类变量 value 的定义变为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public static final int value = 123;</span><br></pre></td></tr></table></figure>
+<p>那么在准备阶段虚拟机会根据 ConstantValue 的设置将 value 赋值为 123。</p>
+<h2 id="解析"><a href="#解析" class="headerlink" title="解析"></a>解析</h2><p>解析阶段是虚拟机将常量池内的符号引用替换为直接引用的过程。</p>
+<h2 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h2><p>类初始化阶段是类加载过程的最后一步，是执行类构造器 <clinit>() 方法的过程。</clinit></p>
+<p><clinit>() 方法是由编译器自动收集类中的所有类变量的赋值动作和静态语句块（static {} 块）中的语句合并产生的，编译器收集的顺序是由语句在源文件中出现的顺序所决定的。</clinit></p>
+<p>静态语句块中只能访问定义在静态语句块之前的变量，定义在它之后的变量，在前面的静态语句块中可以赋值，但不能访问。如下方代码所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        i = <span class="number">0</span>;  <span class="comment">// 给变量赋值可以正常编译通过</span></span><br><span class="line">        System.out.println(i);  <span class="comment">// 这句编译器会提示“非法向前引用”</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">int</span> i = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><clinit>() 方法不需要显式调用父类构造器，虚拟机会保证在子类的 <clinit>() 方法执行之前，父类的 <clinit>() 方法已经执行完毕。</clinit></clinit></clinit></p>
+<p>由于父类的 <clinit>() 方法先执行，意味着父类中定义的静态语句块要优先于子类的变量赋值操作。如下方代码所示：</clinit></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Parent</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> A = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        A = <span class="number">2</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Sub</span> <span class="keyword">extends</span> <span class="title">Parent</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> B = A;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    System.out.println(Sub.B); <span class="comment">// 输出 2</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><clinit>() 方法不是必需的，如果一个类没有静态语句块，也没有对类变量的赋值操作，那么编译器可以不为这个类生成 <clinit>() 方法。</clinit></clinit></p>
+<p>接口中不能使用静态代码块，但接口也需要通过 <clinit>() 方法为接口中定义的静态成员变量显式初始化。但接口与类不同，接口的 <clinit>() 方法不需要先执行父类的 <clinit>() 方法，只有当父接口中定义的变量使用时，父接口才会初始化。</clinit></clinit></clinit></p>
+<p>虚拟机会保证一个类的 <clinit>() 方法在多线程环境中被正确加锁、同步。如果多个线程同时去初始化一个类，那么只会有一个线程去执行这个类的 <clinit>() 方法。</clinit></clinit></p>
+
     </article>
     <!-- license  -->
     
         <div class="license-wrapper">
             <p>原文作者：<a href="http://yoursite.com">John Doe</a>
-            <p>原文链接：<a href="http://yoursite.com/2019/04/06/kobepassme/">http://yoursite.com/2019/04/06/kobepassme/</a>
-            <p>发表日期：<a href="http://yoursite.com/2019/04/06/kobepassme/">April 6th 2019, 1:50:42 am</a>
-            <p>更新日期：<a href="http://yoursite.com/2019/04/06/kobepassme/">April 6th 2019, 1:50:42 am</a>
+            <p>原文链接：<a href="http://yoursite.com/2019/04/06/9 类加载过程/">http://yoursite.com/2019/04/06/9 类加载过程/</a>
+            <p>发表日期：<a href="http://yoursite.com/2019/04/06/9 类加载过程/">April 6th 2019, 2:45:15 pm</a>
+            <p>更新日期：<a href="http://yoursite.com/2019/04/06/9 类加载过程/">April 3rd 2019, 12:40:05 am</a>
             <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -412,7 +446,7 @@ height:50vh;
         <li class="next">
             
                 <div class="nextSlogan">Next Post</div>
-                <a href= "/2019/04/06/1 jvm内存结构/" title= "">
+                <a href= "/2019/04/06/类加载器/" title= "">
                     <div class="nextTitle">[Untitled Post]</div>
                 </a>
             
@@ -420,8 +454,8 @@ height:50vh;
         <li class="previous">
             
                 <div class="prevSlogan">Previous Post</div>
-                <a href= "/2018/07/04/湖人总冠军/" title= "湖人总冠军">
-                    <div class="prevTitle">湖人总冠军</div>
+                <a href= "/2019/04/06/8 类加载时机/" title= "">
+                    <div class="prevTitle">[Untitled Post]</div>
                 </a>
             
         </li>
@@ -540,7 +574,7 @@ top:50vh;
         <div class="toc-catalog">
             <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
         </div>
-        
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#9-类加载过程"><span class="toc-number">1.</span> <span class="toc-text">9 类加载过程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#加载"><span class="toc-number">1.1.</span> <span class="toc-text">加载</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#加载过程"><span class="toc-number">1.1.1.</span> <span class="toc-text">加载过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#获取二进制字节流"><span class="toc-number">1.1.2.</span> <span class="toc-text">获取二进制字节流</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#验证"><span class="toc-number">1.2.</span> <span class="toc-text">验证</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#验证的重要性"><span class="toc-number">1.2.1.</span> <span class="toc-text">验证的重要性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#准备"><span class="toc-number">1.3.</span> <span class="toc-text">准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解析"><span class="toc-number">1.4.</span> <span class="toc-text">解析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#初始化"><span class="toc-number">1.5.</span> <span class="toc-text">初始化</span></a></li></ol></li></ol>
     </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>

@@ -22,7 +22,7 @@
     <meta name="description" content="">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-    <title>kobepassme · bryanze&#39;s Studio</title>
+    <title>bryanze&#39;s Studio</title>
     <style type="text/css">
     @font-face {
         font-family: 'Oswald-Regular';
@@ -217,7 +217,7 @@
                 <a href="/" >bryanze&#39;s Studio.</a>
             </div>
             <div class="post-title">
-                <a href="#" class="post-name">kobepassme</a>
+                <a href="#" class="post-name"></a>
             </div>
     </div>
     
@@ -247,7 +247,7 @@ height:50vh;
         <h1 class="intro-title">
             <!-- 主页  -->
             
-            kobepassme
+            [Untitled Post]
             <!-- 404 -->
             
         </h1>
@@ -266,7 +266,7 @@ height:50vh;
                 
                 
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">0</span>阅读时长: <span class="post-count reading-time">1 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">1.7k</span>阅读时长: <span class="post-count reading-time">6 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
@@ -395,15 +395,218 @@ height:50vh;
         <div class="container container-unloaded">
             <main class="main post-page">
     <article class="article-entry">
-        
+        <h1 id="7-类文件结构"><a href="#7-类文件结构" class="headerlink" title="7 类文件结构"></a>7 类文件结构</h1><h2 id="JVM的“无关性”"><a href="#JVM的“无关性”" class="headerlink" title="JVM的“无关性”"></a>JVM的“无关性”</h2><p>两个无关性：</p>
+<ul>
+<li>平台无关性：任何操作系统都能运行java代码</li>
+<li>语言无关性：JVM能运行除java外的其它代码<br>Java源代码首先需要使用javac编译器编译成.class文件，然后jvm执行.class文件，从而程序开始运行。<br>JVM只认识.class文件，不关心是何种语言生成的.class文件。只要该文件符合JVM规范就能运行。目前已经有==JRuby、Jython、Scala== 等语言能够在 JVM 上运行。它们有各自的语法规则，不过它们的编译器 都能将各自的源码编译成符合 JVM 规范的 .class 文件，从而能够借助 JVM 运行它们。<blockquote>
+<p>java语言中的各种变量、关键字和运算符号的语义最终都是由多条字节码组合而成，因此字节码命令所能提供的语义描述肯定比java语言本身更强大。有些java语言无法支持的语言特性不代表字节码本身无法有效支持。</p>
+</blockquote>
+</li>
+</ul>
+<h2 id="Class文件结构"><a href="#Class文件结构" class="headerlink" title="Class文件结构"></a>Class文件结构</h2><p>class文件是二进制文件，他的内容有着严格的规范，文件中没有任何的空格，全是连续的0/1,所有内容被分为两种类型：无符号数和表。</p>
+<ul>
+<li>无符号数表示class文件的值，这些值没有任何类型，但是有不同的长度。1、u2、u4、u8 分别代表 1/2/4/8 字节的无符号数。</li>
+<li>表：有多个无符号数或者其他表作为数据项构成的符合数据类型。</li>
+</ul>
+<p>class文件具体有以下几个构成：</p>
+<ul>
+<li>魔数</li>
+<li>版本信息</li>
+<li>常量池</li>
+<li>访问标志</li>
+<li>类索引、父类索引、接口3索引集合</li>
+<li>字段表集合</li>
+<li>方法表集合</li>
+<li>属性表集合</li>
+</ul>
+<h3 id="魔数"><a href="#魔数" class="headerlink" title="魔数"></a>魔数</h3><p>Class 文件的头 4 个字节称为魔数，用来表示这个 Class 文件的类型。<br>Class 文件的魔数是用 16 进制表示的“CAFE BABE”，是不是很具有浪漫色彩？。</p>
+<h3 id="版本信息"><a href="#版本信息" class="headerlink" title="版本信息"></a>版本信息</h3><p>紧接着魔数的 4 个字节是版本信息，5-6 字节表示次版本号，7-8 字节表示主版本号，它们表示当前 Class 文件中使用的是哪个版本的 JDK。</p>
+<h3 id="常量池"><a href="#常量池" class="headerlink" title="常量池"></a>常量池</h3><p>版本信息之后就是常量池，常量池中存放两种类型的常量：</p>
+<ul>
+<li><p>字面值常量</p>
+<p>字面值常量就是我们在程序中定义的字符串、被 final 修饰的值。</p>
+</li>
+<li><p>符号引用</p>
+<p>符号引用就是我们定义的各种名字：类和接口的全限定名、字段的名字和描述符、方法的名字和描述符。</p>
+</li>
+</ul>
+<h4 id="常量池中的常量类型"><a href="#常量池中的常量类型" class="headerlink" title="常量池中的常量类型"></a>常量池中的常量类型</h4><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>tag</th>
+<th>描述　</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CONSTANT_utf8_info</td>
+<td>1</td>
+<td>UTF-8编码的字符串</td>
+</tr>
+<tr>
+<td>CONSTANT_Integer_info</td>
+<td>3</td>
+<td>整型字面量</td>
+</tr>
+<tr>
+<td>CONSTANT_Float_info</td>
+<td>4</td>
+<td>浮点型字面量</td>
+</tr>
+<tr>
+<td>CONSTANT_Long_info</td>
+<td>5</td>
+<td>长整型字面量</td>
+</tr>
+<tr>
+<td>CONSTANT_Double_info</td>
+<td>6</td>
+<td>双精度浮点型字面量</td>
+</tr>
+<tr>
+<td>CONSTANT_Class_info</td>
+<td>7</td>
+<td>类或接口的符号引用</td>
+</tr>
+<tr>
+<td>CONSTANT_String_info</td>
+<td>8</td>
+<td>字符串类型字面量</td>
+</tr>
+<tr>
+<td>CONSTANT_Fieldref_info</td>
+<td>9</td>
+<td>字段的符号引用</td>
+</tr>
+<tr>
+<td>CONSTANT_Methodref_info</td>
+<td>10</td>
+<td>类中方法的符号引用</td>
+</tr>
+<tr>
+<td>CONSTANT_InterfaceMethodref_info</td>
+<td>11</td>
+<td>接口中方法的符号引用</td>
+</tr>
+<tr>
+<td>CONSTANT_NameAndType_info</td>
+<td>12</td>
+<td>字段或方法的符号引用</td>
+</tr>
+<tr>
+<td>CONSTANT_MethodHandle_info</td>
+<td>15</td>
+<td>表示方法句柄</td>
+</tr>
+<tr>
+<td>CONSTANT_MethodType_info</td>
+<td>16</td>
+<td>标识方法类型</td>
+</tr>
+<tr>
+<td>CONSTANT_InvokeDynamic_info</td>
+<td>18</td>
+<td>表示一个动态方法调用点</td>
+</tr>
+</tbody>
+</table>
+<p>对于 CONSTANT_Class_info（此类型的常量代表一个类或者接口的符号引用），它的二维表结构如下：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>名称</th>
+<th>数量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>u1</td>
+<td>tag</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>name_index</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p>tag 是标志位，用于区分常量类型；name_index 是一个索引值，它指向常量池中一个 CONSTANT_Utf8_info 类型常量，此常量代表这个类（或接口）的全限定名，这里 name_index 值若为 0x0002，也即是指向了常量池中的第二项常量。</p>
+<p>CONSTANT_Utf8_info 型常量的结构如下：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>名称</th>
+<th>数量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>u1</td>
+<td>tag</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>length</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u1</td>
+<td>bytes</td>
+<td>length</td>
+</tr>
+</tbody>
+</table>
+<p>tag 是当前常量的类型；length 表示这个字符串的长度；bytes 是这个字符串的内容（采用缩略的 UTF8 编码）</p>
+<h3 id="访问标志"><a href="#访问标志" class="headerlink" title="访问标志"></a>访问标志</h3><p>在常量池结束之后，紧接着的两个字节代表访问标志，这个标志用于识别一些类或者接口层次的访问信息，包括：这个 Class 是类还是接口；是否定义为 public 类型；是否被 abstract/final 修饰。、</p>
+<h3 id="类索引父类索引、接口索引集合"><a href="#类索引父类索引、接口索引集合" class="headerlink" title="类索引父类索引、接口索引集合"></a>类索引父类索引、接口索引集合</h3><p>都属于u2类型的数据，class文件由这三项数据来确定类的继承关系。类索引用于确定这个类的全限定名，父类索引用于确定这个类的父类的全限定名。<br>由于java不允许多重继承，所以父类索引只有一个，除了java.lang.Object外，所有java类都有父类。一个类可能实现了多个接口，因此用接口索引集合来描述。这个集合的第一项为U2类型的数据，表示索引表的容量，接下来就是接口的名字索引。</p>
+<p>类索引和父类索引用两个u2类型的索引值表示，它们各自指向一个类型为 CONSTANT_Class_info 的类描述符常量，通过该常量总的索引值可以找到定义在 CONSTANT_Utf8_info 类型的常量中的全限定名字符串。</p>
+<h3 id="字段表"><a href="#字段表" class="headerlink" title="字段表"></a>字段表</h3><p>字段表集合存储本类涉及到的成员变量，包括实例变量和类变量，但不包括方法的局部变量。<br>每一个字段表只表示一个成员变量，本类中所有成员变量构成了字段表集合。字段表结构如下：<br>| 类型 | 名称 | 数量 | 说明 |<br>| — | — | — | — |<br>| u2 | access_flags | 1 | 字段的访问标志，与类稍有不同 |<br>| u2 | name_index | 1 | 字段名字的索引 |<br>| u2 | descriptor_index | 1 | 描述符，用于描述字段的数据类型。 基本数据类型用大写字母表示； 对象类型用“L 对象类型的全限定名”表示。 |<br>| u2 | attributes_count | 1 | 属性表集合的长度 |<br>| u2 | attributes | attributes_count | 属性表集合，用于存放属性的额外信息，如属性的值。 |</p>
+<blockquote>
+<p>字段表集合中不会出现从父类（或接口）中继承而来的字段，但有可能出现原本 Java 代码中不存在的字段，譬如在内部类中为了保持对外部类的访问性，会自动添加指向外部类实例的字段。</p>
+</blockquote>
+<h3 id="方法表集合"><a href="#方法表集合" class="headerlink" title="方法表集合"></a>方法表集合</h3><p>方法表结构与属性表类似。</p>
+<p>volatile 关键字 和 transient 关键字不能修饰方法，所以方法表的访问标志中没有 ACC_VOLATILE 和 ACC_TRANSIENT 标志。</p>
+<p>==方法表的属性表集合中有一张 Code 属性表，用于存储当前方法经编译器编译后的字节码指令。==</p>
+<h3 id="属性表集合"><a href="#属性表集合" class="headerlink" title="属性表集合"></a>属性表集合</h3><p>每个属性对应一张属性表，属性表的结构如下：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>名称</th>
+<th>数量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>u2</td>
+<td>attribute_name_index</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u4</td>
+<td>attribute_length</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u1</td>
+<td>info</td>
+</tr>
+</tbody>
+</table>
+
     </article>
     <!-- license  -->
     
         <div class="license-wrapper">
             <p>原文作者：<a href="http://yoursite.com">John Doe</a>
-            <p>原文链接：<a href="http://yoursite.com/2019/04/06/kobepassme/">http://yoursite.com/2019/04/06/kobepassme/</a>
-            <p>发表日期：<a href="http://yoursite.com/2019/04/06/kobepassme/">April 6th 2019, 1:50:42 am</a>
-            <p>更新日期：<a href="http://yoursite.com/2019/04/06/kobepassme/">April 6th 2019, 1:50:42 am</a>
+            <p>原文链接：<a href="http://yoursite.com/2019/04/06/7 类文件结构/">http://yoursite.com/2019/04/06/7 类文件结构/</a>
+            <p>发表日期：<a href="http://yoursite.com/2019/04/06/7 类文件结构/">April 6th 2019, 2:45:15 pm</a>
+            <p>更新日期：<a href="http://yoursite.com/2019/04/06/7 类文件结构/">April 2nd 2019, 4:18:13 pm</a>
             <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -412,7 +615,7 @@ height:50vh;
         <li class="next">
             
                 <div class="nextSlogan">Next Post</div>
-                <a href= "/2019/04/06/1 jvm内存结构/" title= "">
+                <a href= "/2019/04/06/8 类加载时机/" title= "">
                     <div class="nextTitle">[Untitled Post]</div>
                 </a>
             
@@ -420,8 +623,8 @@ height:50vh;
         <li class="previous">
             
                 <div class="prevSlogan">Previous Post</div>
-                <a href= "/2018/07/04/湖人总冠军/" title= "湖人总冠军">
-                    <div class="prevTitle">湖人总冠军</div>
+                <a href= "/2019/04/06/6 JVM的性能调优/" title= "">
+                    <div class="prevTitle">[Untitled Post]</div>
                 </a>
             
         </li>
@@ -540,7 +743,7 @@ top:50vh;
         <div class="toc-catalog">
             <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
         </div>
-        
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#7-类文件结构"><span class="toc-number">1.</span> <span class="toc-text">7 类文件结构</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#JVM的“无关性”"><span class="toc-number">1.1.</span> <span class="toc-text">JVM的“无关性”</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Class文件结构"><span class="toc-number">1.2.</span> <span class="toc-text">Class文件结构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#魔数"><span class="toc-number">1.2.1.</span> <span class="toc-text">魔数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#版本信息"><span class="toc-number">1.2.2.</span> <span class="toc-text">版本信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#常量池"><span class="toc-number">1.2.3.</span> <span class="toc-text">常量池</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#常量池中的常量类型"><span class="toc-number">1.2.3.1.</span> <span class="toc-text">常量池中的常量类型</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#访问标志"><span class="toc-number">1.2.4.</span> <span class="toc-text">访问标志</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#类索引父类索引、接口索引集合"><span class="toc-number">1.2.5.</span> <span class="toc-text">类索引父类索引、接口索引集合</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#字段表"><span class="toc-number">1.2.6.</span> <span class="toc-text">字段表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#方法表集合"><span class="toc-number">1.2.7.</span> <span class="toc-text">方法表集合</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#属性表集合"><span class="toc-number">1.2.8.</span> <span class="toc-text">属性表集合</span></a></li></ol></li></ol></li></ol>
     </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>

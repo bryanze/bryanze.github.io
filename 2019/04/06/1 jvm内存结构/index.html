@@ -22,7 +22,7 @@
     <meta name="description" content="">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-    <title>kobepassme · bryanze&#39;s Studio</title>
+    <title>bryanze&#39;s Studio</title>
     <style type="text/css">
     @font-face {
         font-family: 'Oswald-Regular';
@@ -217,7 +217,7 @@
                 <a href="/" >bryanze&#39;s Studio.</a>
             </div>
             <div class="post-title">
-                <a href="#" class="post-name">kobepassme</a>
+                <a href="#" class="post-name"></a>
             </div>
     </div>
     
@@ -247,7 +247,7 @@ height:50vh;
         <h1 class="intro-title">
             <!-- 主页  -->
             
-            kobepassme
+            [Untitled Post]
             <!-- 404 -->
             
         </h1>
@@ -266,7 +266,7 @@ height:50vh;
                 
                 
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">0</span>阅读时长: <span class="post-count reading-time">1 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">2.1k</span>阅读时长: <span class="post-count reading-time">7 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
@@ -395,15 +395,110 @@ height:50vh;
         <div class="container container-unloaded">
             <main class="main post-page">
     <article class="article-entry">
-        
+        <h1 id="jvm内存结构"><a href="#jvm内存结构" class="headerlink" title="jvm内存结构"></a>jvm内存结构</h1><p>jvm虚拟机内存空间分为5部分：</p>
+<ul>
+<li>程序计数器</li>
+<li>java虚拟机栈</li>
+<li>本地方法栈</li>
+<li>堆</li>
+<li>方法区</li>
+</ul>
+<p><img src="https://github.com/doocs/jvm/raw/master/images/jvm-memory-structure.jpg" alt="jvm-memory-structure"><br>JDK 1.8 同 JDK 1.7 比，最大的差别就是：元数据区取代了永久代。元空间的本质和永久代类似，都是对 JVM 规范中方法区的实现。不过元空间与永久代之间最大的区别在于：元数据空间并不在虚拟机中，而是使用本地内存。</p>
+<h2 id="程序计数器（PC-寄存器）"><a href="#程序计数器（PC-寄存器）" class="headerlink" title="程序计数器（PC 寄存器）"></a>程序计数器（PC 寄存器）</h2><h3 id="程序计数器的定义"><a href="#程序计数器的定义" class="headerlink" title="程序计数器的定义"></a>程序计数器的定义</h3><p>程序计数器是一块较小的内存空间，是当前线程正在执行的那条字节码指令的地址。若当前线程正在执行的是一个本地方法。那么此时程序计数器为undefined。</p>
+<h3 id="程序计数器的作用"><a href="#程序计数器的作用" class="headerlink" title="程序计数器的作用"></a>程序计数器的作用</h3><ul>
+<li>字节码解释器通过改变程序计数器来依次读取指令，从而实现代码的流程控制。</li>
+<li>在多线程情况下，程序计数器记录的是当前线程执行的位置，从而当线程切换回来时，就知道上次线程执行到哪了。</li>
+</ul>
+<h3 id="程序计数器的特点"><a href="#程序计数器的特点" class="headerlink" title="程序计数器的特点"></a>程序计数器的特点</h3><ul>
+<li>是一块较小的内存空间。</li>
+<li>线程私有，每条线程都有自己的程序计数器。</li>
+<li>生命周期：随着线程的创建而创建，随着线程的结束而销毁。</li>
+<li>是唯一一个不会出现<code>OutOfMemoryError</code>的内存区域。</li>
+</ul>
+<h2 id="Java-虚拟机栈（Java-栈）"><a href="#Java-虚拟机栈（Java-栈）" class="headerlink" title="Java 虚拟机栈（Java 栈）"></a>Java 虚拟机栈（Java 栈）</h2><hr>
+<h3 id="Java-虚拟机栈的定义"><a href="#Java-虚拟机栈的定义" class="headerlink" title="Java 虚拟机栈的定义"></a>Java 虚拟机栈的定义</h3><p>Java 虚拟机栈是描述 Java 方法运行过程的内存模型。<br>Java 虚拟机栈会为每一个即将运行的 Java 方法创建一块叫做“栈帧”的区域，用于存放该方法运行过程中的一些信息，如：</p>
+<ul>
+<li>局部变量表</li>
+<li>操作数栈</li>
+<li>动态链接</li>
+<li>方法出口信息</li>
+<li>……</li>
+</ul>
+<p><img src="https://github.com/doocs/jvm/raw/master/images/jvm-stack.jpg" alt="jvm-stack"></p>
+<h3 id="压栈出栈过程"><a href="#压栈出栈过程" class="headerlink" title="压栈出栈过程"></a>压栈出栈过程</h3><p>当方法运行过程中需要创建局部变量时，就将局部变量的值存入栈帧中的局部变量表中。</p>
+<p>Java 虚拟机栈的栈顶的栈帧是当前正在执行的活动栈，也就是当前正在执行的方法，PC 寄存器也会指向这个地址。只有这个活动的栈帧的本地变量可以被操作数栈使用，当在这个栈帧中调用另一个方法，与之对应的栈帧又会被创建，新创建的栈帧压入栈顶，变为当前的活动栈帧。</p>
+<p>方法结束后，当前栈帧被移出，栈帧的返回值变成新的活动栈帧中操作数栈的一个操作数。如果没有返回值，那么新的活动栈帧中操作数栈的操作数没有变化。</p>
+<blockquote>
+<p>由于Java 虚拟机栈是与线程对应的，数据不是线程共享的，因此不用关心数据一致性问题，也不会存在同步锁的问题。</p>
+</blockquote>
+<h3 id="Java-虚拟机栈的特点"><a href="#Java-虚拟机栈的特点" class="headerlink" title="Java 虚拟机栈的特点"></a>Java 虚拟机栈的特点</h3><ul>
+<li><p>局部变量表随着栈帧的创建而创建，它的大小在编译时确定，创建时只需分配事先规定的大小即可。在方法运行过程中，局部变量表的大小不会发生改变。</p>
+</li>
+<li><p>Java 虚拟机栈会出现两种异常：StackOverFlowError 和 OutOfMemoryError。</p>
+<ul>
+<li>StackOverFlowError 若 Java 虚拟机栈的大小不允许动态扩展，那么当线程请求栈的深度超过当前 Java 虚拟机栈的最大深度时，抛出 StackOverFlowError 异常。</li>
+<li>OutOfMemoryError 若允许动态扩展，那么当线程请求栈时内存用完了，无法再动态扩展时，抛出 OutOfMemoryError 异常。</li>
+</ul>
+</li>
+<li>Java 虚拟机栈也是线程私有，随着线程创建而创建，随着线程的结束而销毁。<blockquote>
+<p>出现StackOverFlowError时，内存空间可能还有很多。</p>
+</blockquote>
+</li>
+</ul>
+<h2 id="本地方法栈（C-栈）"><a href="#本地方法栈（C-栈）" class="headerlink" title="本地方法栈（C 栈）"></a>本地方法栈（C 栈）</h2><hr>
+<h3 id="本地方法栈的定义"><a href="#本地方法栈的定义" class="headerlink" title="本地方法栈的定义"></a>本地方法栈的定义</h3><p><strong>本地方法栈是为 JVM 运行 Native 方法准备的空间</strong>，由于很多 Native 方法都是用 C 语言实现的，所以它通常又叫 C 栈。它与 Java 虚拟机栈实现的功能类似，只不过<strong>本地方法栈是描述本地方法运行过程的内存模型。</strong></p>
+<h3 id="栈帧变化过程"><a href="#栈帧变化过程" class="headerlink" title="栈帧变化过程"></a>栈帧变化过程</h3><p>本地方法被执行时，在本地方法栈也会创建一块栈帧，用于存放该方法的局部变量表、操作数栈、动态链接、方法出口信息等，<br>方法执行结束后，相应的栈帧也会出栈，并释放内存空间。也会抛出StackOverFlowErrow和OutOfMemoryError异常。</p>
+<blockquote>
+<p>如果java虚拟机本身不支持Native方法，或是本身不依赖于传统栈，那么可以不提供本地方法栈。如果支持本地方法栈，那么这个栈一般会在线程创建的时候按线程分配。</p>
+</blockquote>
+<h2 id="堆"><a href="#堆" class="headerlink" title="堆"></a>堆</h2><hr>
+<h3 id="堆的定义"><a href="#堆的定义" class="headerlink" title="堆的定义"></a>堆的定义</h3><p>堆是用来存放对象的内存空间，几乎所有对象都存储在堆里。</p>
+<h3 id="堆的特点"><a href="#堆的特点" class="headerlink" title="堆的特点"></a>堆的特点</h3><ul>
+<li>线程共享，整个 Java 虚拟机只有一个堆，所有的线程都访问同一个堆。而程序计数器、Java 虚拟机栈、本地方法栈都是一个线程对应一个。</li>
+<li>在虚拟机启动时创建。</li>
+<li>是垃圾回收的主要场所。</li>
+<li>进一步可分为：新生代(Eden区 From Survior To Survivor)、老年代。</li>
+</ul>
+<p>不同的区域存放不同生命周期的对象，这样可以根据不同的区域使用不同的垃圾回收算法，更具有针对性。</p>
+<p>堆的大小既可以固定也可以扩展，但是对于主流的虚拟机是可以扩展的。进行线程请求分配内存，但是堆已满，且内存已经无法扩展，就会抛出OutOfMemoryError异常。</p>
+<blockquote>
+<p>java堆所使用的内存不需要保证是连续的。而由于堆是被所有线程共享，所以对他的访问需要注意同步问题，方法和对应的属性都需要保证一致性。</p>
+</blockquote>
+<h2 id="方法区"><a href="#方法区" class="headerlink" title="方法区"></a>方法区</h2><hr>
+<h3 id="方法区的定义"><a href="#方法区的定义" class="headerlink" title="方法区的定义"></a>方法区的定义</h3><p>Java 虚拟机规范中定义方法区是堆的一个逻辑部分。方法区存放以下信息：</p>
+<ul>
+<li>已经被虚拟机加载的类信息</li>
+<li>常量</li>
+<li>静态变量</li>
+<li>即时编译器编译后的代码</li>
+</ul>
+<h3 id="方法区的特点"><a href="#方法区的特点" class="headerlink" title="方法区的特点"></a>方法区的特点</h3><ul>
+<li>==线程共享==。 方法区是堆的一个逻辑部分，因此和堆一样，都是线程共享的。整个虚拟机只有一个方法区。</li>
+<li>==永久代==。 方法区中信息一般是长期存在的，而且它又是堆的一个逻辑分区，用上堆的划分方法，称为“永久代”。</li>
+<li>==内存回收效率低==。方法区中的信息一般需要长期存在，回收一遍之后可能只有少量信息无效。主要回收目标是：==<strong>对常量池的回收；对类型的卸载。</strong>==</li>
+</ul>
+<h3 id="运行时的常量池"><a href="#运行时的常量池" class="headerlink" title="运行时的常量池"></a>运行时的常量池</h3><p>方法区中存放：类信息、常量、静态变量、及时编译器编译后的代码。常量就存放在运行时的常量池。<br>当类被java虚拟机加载后，。class文件中的常量就存放在方法区的运行时常量池中。在运行期间，可以向常量池中添加新的常量。如String类的intern（）方法就能在运行期间向常量池中添加字符常量。</p>
+<h2 id="直接内存（堆外内存）"><a href="#直接内存（堆外内存）" class="headerlink" title="直接内存（堆外内存）"></a>直接内存（堆外内存）</h2><hr>
+<p>直接内存是除 Java 虚拟机之外的内存，但也可能被 Java 使用。</p>
+<h3 id="操作直接内存"><a href="#操作直接内存" class="headerlink" title="操作直接内存"></a>操作直接内存</h3><p>在NIO中引入一种基于通道和缓冲的IO方式。它可以通过调用本地方法直接分配java虚拟机之外的内存，然后通过一个存储在堆中的<code>DirectByteBuffer</code>对象直接操作该内存，而无需将外部内存中的数据复制到堆中再进行操作，从而提高了数据操作的效率。<br>直接内存的大小不受虚拟机控制，但既然是内存，当内存不足时就会抛出OutOfMemoryError异常。</p>
+<h3 id="直接内存与堆内存比较"><a href="#直接内存与堆内存比较" class="headerlink" title="直接内存与堆内存比较"></a>直接内存与堆内存比较</h3><ul>
+<li>直接内存申请空间耗费更多的性能</li>
+<li>读取IO的性能优于普通的堆内存</li>
+<li>直接内存的作用链：本地IO ——直接内存——本地IO</li>
+<li>堆内存作用链：本地IO —— 直接内存 ——非直接内存 -—— 直接内存 —— 本地IO<br>*</li>
+</ul>
+<blockquote>
+<p>服务器管理员在配置虚拟机参数的时候，会根据实际内存设置 <code>-xms</code>等参数信息，但经常 忽略直接内存使得 各个你内存区域总和大于物理内存限制，从而导致动态扩展时出现‘OutOfMemoryError异常</p>
+</blockquote>
+
     </article>
     <!-- license  -->
     
         <div class="license-wrapper">
             <p>原文作者：<a href="http://yoursite.com">John Doe</a>
-            <p>原文链接：<a href="http://yoursite.com/2019/04/06/kobepassme/">http://yoursite.com/2019/04/06/kobepassme/</a>
-            <p>发表日期：<a href="http://yoursite.com/2019/04/06/kobepassme/">April 6th 2019, 1:50:42 am</a>
-            <p>更新日期：<a href="http://yoursite.com/2019/04/06/kobepassme/">April 6th 2019, 1:50:42 am</a>
+            <p>原文链接：<a href="http://yoursite.com/2019/04/06/1 jvm内存结构/">http://yoursite.com/2019/04/06/1 jvm内存结构/</a>
+            <p>发表日期：<a href="http://yoursite.com/2019/04/06/1 jvm内存结构/">April 6th 2019, 2:45:15 pm</a>
+            <p>更新日期：<a href="http://yoursite.com/2019/04/06/1 jvm内存结构/">March 27th 2019, 10:14:35 pm</a>
             <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -412,7 +507,7 @@ height:50vh;
         <li class="next">
             
                 <div class="nextSlogan">Next Post</div>
-                <a href= "/2019/04/06/1 jvm内存结构/" title= "">
+                <a href= "/2019/04/06/2 HotSpot虚拟机对象探秘/" title= "">
                     <div class="nextTitle">[Untitled Post]</div>
                 </a>
             
@@ -420,8 +515,8 @@ height:50vh;
         <li class="previous">
             
                 <div class="prevSlogan">Previous Post</div>
-                <a href= "/2018/07/04/湖人总冠军/" title= "湖人总冠军">
-                    <div class="prevTitle">湖人总冠军</div>
+                <a href= "/2019/04/06/kobepassme/" title= "kobepassme">
+                    <div class="prevTitle">kobepassme</div>
                 </a>
             
         </li>
@@ -540,7 +635,7 @@ top:50vh;
         <div class="toc-catalog">
             <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
         </div>
-        
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#jvm内存结构"><span class="toc-number">1.</span> <span class="toc-text">jvm内存结构</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#程序计数器（PC-寄存器）"><span class="toc-number">1.1.</span> <span class="toc-text">程序计数器（PC 寄存器）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#程序计数器的定义"><span class="toc-number">1.1.1.</span> <span class="toc-text">程序计数器的定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#程序计数器的作用"><span class="toc-number">1.1.2.</span> <span class="toc-text">程序计数器的作用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#程序计数器的特点"><span class="toc-number">1.1.3.</span> <span class="toc-text">程序计数器的特点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Java-虚拟机栈（Java-栈）"><span class="toc-number">1.2.</span> <span class="toc-text">Java 虚拟机栈（Java 栈）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Java-虚拟机栈的定义"><span class="toc-number">1.2.1.</span> <span class="toc-text">Java 虚拟机栈的定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#压栈出栈过程"><span class="toc-number">1.2.2.</span> <span class="toc-text">压栈出栈过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Java-虚拟机栈的特点"><span class="toc-number">1.2.3.</span> <span class="toc-text">Java 虚拟机栈的特点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#本地方法栈（C-栈）"><span class="toc-number">1.3.</span> <span class="toc-text">本地方法栈（C 栈）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#本地方法栈的定义"><span class="toc-number">1.3.1.</span> <span class="toc-text">本地方法栈的定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#栈帧变化过程"><span class="toc-number">1.3.2.</span> <span class="toc-text">栈帧变化过程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#堆"><span class="toc-number">1.4.</span> <span class="toc-text">堆</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#堆的定义"><span class="toc-number">1.4.1.</span> <span class="toc-text">堆的定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#堆的特点"><span class="toc-number">1.4.2.</span> <span class="toc-text">堆的特点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#方法区"><span class="toc-number">1.5.</span> <span class="toc-text">方法区</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#方法区的定义"><span class="toc-number">1.5.1.</span> <span class="toc-text">方法区的定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#方法区的特点"><span class="toc-number">1.5.2.</span> <span class="toc-text">方法区的特点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#运行时的常量池"><span class="toc-number">1.5.3.</span> <span class="toc-text">运行时的常量池</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#直接内存（堆外内存）"><span class="toc-number">1.6.</span> <span class="toc-text">直接内存（堆外内存）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#操作直接内存"><span class="toc-number">1.6.1.</span> <span class="toc-text">操作直接内存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#直接内存与堆内存比较"><span class="toc-number">1.6.2.</span> <span class="toc-text">直接内存与堆内存比较</span></a></li></ol></li></ol></li></ol>
     </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
